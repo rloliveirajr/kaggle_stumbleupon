@@ -1,0 +1,4 @@
+10 CLASS=0 w[0]=popular w[1]=jovem w[2]=F w[3]=nao
+11 CLASS=0 w[0]=popular w[1]=adulto w[2]=F w[3]=nao
+12 CLASS=1 w[0]=utilitário w[1]=idoso w[2]=M w[3]=sim
+13 CLASS=3 w[0]=bla w[1]=bla w[2]=bla w[3]=bla

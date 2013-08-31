@@ -1,0 +1,10 @@
+0 CLASS=1 w[0]=esporte w[1]=jovem w[2]=M w[3]=nao
+1 CLASS=0 w[0]=esporte w[1]=adulto w[2]=M w[3]=nao
+2 CLASS=0 w[0]=utilitário w[1]=adulto w[2]=F w[3]=nao
+3 CLASS=1 w[0]=popular w[1]=adulto w[2]=M w[3]=sim
+4 CLASS=1 w[0]=esporte w[1]=idoso w[2]=M w[3]=nao
+5 CLASS=0 w[0]=popular w[1]=adulto w[2]=F w[3]=nao
+6 CLASS=1 w[0]=esporte w[1]=idoso w[2]=F w[3]=sim
+7 CLASS=1 w[0]=popular w[1]=jovem w[2]=M w[3]=sim
+8 CLASS=1 w[0]=utilitário w[1]=idoso w[2]=M w[3]=sim
+9 CLASS=0 w[0]=popular w[1]=jovem w[2]=M w[3]=nao
