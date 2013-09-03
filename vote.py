@@ -18,11 +18,11 @@ score_tite = 0.75710
 score_body = 0.77918
 score_all = 0.79811
 
-i_f = open( "p_2.csv" )
+i_f = open( "lac_data/lac_body_title_url.csv" )
 reader = csv.reader( i_f, delimiter = "," )
 reader.next()
 
-output = open("sub.txt", "w")
+output = open("lac_sub_body_title_url.csv", "w")
 output.write("urlid,label\n")
 
 for line in reader:
@@ -30,9 +30,8 @@ for line in reader:
   title = line.pop(0)
   url = line.pop(0)
   body = line.pop(0)
-  al = line.pop(0)
   
-  score = (score_url*float(url) + score_tite*float(title) + score_body*float(body) + score_all * float(al))/4.0
+  score = (score_url*float(url) + score_tite*float(title) + score_body*float(body))/3.0
   l = "%s,%s\n" % (url_id, score)
   #if(comp(score,0.5) > 0):
     #l = "%s,%s\n" % (url_id, 1)

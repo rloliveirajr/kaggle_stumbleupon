@@ -1,9 +1,11 @@
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.ensemble import AdaBoostClassifier
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.naive_bayes import BernoulliNB
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
 from sklearn.datasets import load_svmlight_file
 from sklearn.datasets import load_svmlight_files
 from sklearn import cross_validation
@@ -14,17 +16,17 @@ import argparse
 
 def cross_validate(clf, X, y):
   print "Calc url weigth"
-  #weigth_u = cross_validation.cross_val_score(clf, X["url"].toarray(), y, cv=3).mean()
-  weigth_u = 1.0
+  weigth_u = cross_validation.cross_val_score(clf, X["url"].toarray(), y, cv=3).mean()
+  
   print "Calc body weigth"
-  #weigth_b = cross_validation.cross_val_score(clf, X["body"].toarray(), y, cv=3).mean()
-  weigth_b = 1.0
+  weigth_b = cross_validation.cross_val_score(clf, X["body"].toarray(), y, cv=3).mean()
+  
   print "Calc title weigth"
-  #weigth_t = cross_validation.cross_val_score(clf, X["title"].toarray(), y, cv=3).mean()
-  weigth_t = 1.0
-  print "Calc title all"
+  weigth_t = cross_validation.cross_val_score(clf, X["title"].toarray(), y, cv=3).mean()
+  
+  #print "Calc title all"
   #weigth_a = cross_validation.cross_val_score(clf, X["all"].toarray(), y, cv=3).mean()
-  weigth_a = 1.0
+  #weigth_a = 1.0
   
   ss = cross_validation.ShuffleSplit(len(y), n_iter=5, random_state=0)
   i = 1
@@ -34,14 +36,16 @@ def cross_validate(clf, X, y):
     train_b = X["body"][train_index]
     train_u = X["url"][train_index]
     train_t = X["title"][train_index]
-    train_a = X["all"][train_index]
+    #train_a = X["all"][train_index]
+    
+    xx = cross_validation.ShuffleSplit(len(train_b), n_iter=1, random_state=0)
     
     x_labels = y[train_index]
     
     test_b = X["body"][test_index]
     test_u = X["url"][test_index]
     test_t = X["title"][test_index]
-    test_a = X["all"][test_index]
+    #test_a = X["all"][test_index]
     
     t_labels = y[test_index]
     
@@ -54,12 +58,16 @@ def cross_validate(clf, X, y):
     clf.fit(train_t.toarray(), x_labels)
     probs_t = clf.predict_proba(test_t.toarray())
     
-    clf.fit(train_a.toarray(), x_labels)
-    probs_a = clf.predict_proba(test_a.toarray())
+    #clf.fit(train_a.toarray(), x_labels)
+    #probs_a = clf.predict_proba(test_a.toarray())
     
+    new_features = np.matrix(probs_b, probs_u, probs_t)
+    
+    meta_classifier = RandomForestClassifier(n_estimators=1000,verbose=2,n_jobs=5,min_samples_split=5,random_state=1034324)
+    clf.fit(new_features, x_labels)
     probs = []
     for i in range(len(test_index)):
-      score_i = (probs_b[i,1]*weigth_b + probs_u[i,1]*weigth_u + probs_t[i,1]*weigth_t + probs_a[i,1]*weigth_a)/4.0
+      score_i = (probs_b[i,1]*weigth_b + probs_u[i,1]*weigth_u + probs_t[i,1]*weigth_t)/3.0
       probs.append(score_i)
       
     scores = roc_auc_score(t_labels, probs)
@@ -70,37 +78,39 @@ def cross_validate(clf, X, y):
 def predict(clf, X, y, T, t):
   
   print "Calc url weigth"
-  weigth_u = cross_validation.cross_val_score(clf, X["url"].toarray(), y, cv=3).mean()
+  #weigth_u = cross_validation.cross_val_score(clf, X["url"].toarray(), y, cv=3).mean()
+  weigth_u = 1
   print "Calc body weigth"
-  weigth_b = cross_validation.cross_val_score(clf, X["body"].toarray(), y, cv=3).mean()
+  #weigth_b = cross_validation.cross_val_score(clf, X["body"].toarray(), y, cv=3).mean()
+  weigth_b = 1
   print "Calc title weigth"
-  weigth_t = cross_validation.cross_val_score(clf, X["title"].toarray(), y, cv=3).mean()
-  #print "Calc all weigth"
-  #weigth_a = cross_validation.cross_val_score(clf, X["all"].toarray(), y, cv=3).mean()
+  #weigth_t = cross_validation.cross_val_score(clf, X["title"].toarray(), y, cv=3).mean()
+  weigth_t = 1
   
   train_b = X["body"]
   train_u = X["url"]
   train_t = X["title"]
-  #train_a = X["all"]
   
   x_labels = y
   
   test_b = T["body"]
   test_u = T["url"]
   test_t = T["title"]
-  #test_a = T["all"]
   
+  print "Training body data"
   clf.fit(train_b.toarray(),x_labels)
+  print "Predicting body data"
   probs_b = clf.predict_proba(test_b.toarray())
   
+  print "Training url data"
   clf.fit(train_u.toarray(),x_labels)
+  print "Predicting url data"
   probs_u = clf.predict_proba(test_u.toarray())
   
+  print "Trainin title data"
   clf.fit(train_t.toarray(), x_labels)
+  print "Predicting title data"
   probs_t = clf.predict_proba(test_t.toarray())
-  
-  #clf.fit(train_a, x_labels)
-  #probs_a = clf.predict_proba(test_a)
   
   probs = []
   for i in range(len(t)):
@@ -117,7 +127,7 @@ parser.add_argument( "-c", "--cross_validation", help = "if have make cross-vali
 
 args = parser.parse_args()
 
-classifier = RandomForestRegressor(n_estimators=1000,verbose=2,n_jobs=5,min_samples_split=5,random_state=1034324)
+classifier = SVC( kernel = 'linear', C = 1000 )
 #classifier = RandomForestClassifier()
 
 X_url, y, X_title, y_t, X_body, y_b, X_a, y_a = load_svmlight_files(("url_train.txt", "title_train.txt", "body_train.txt", "all_train.txt"))

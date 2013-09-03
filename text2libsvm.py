@@ -44,20 +44,9 @@ def iterable( reader, test_set, column_name ):
 
                 boilerplate = line.pop( 0 )
                 boilerplate = json.loads( boilerplate )
-
-                """
-                try:
-                        a_title = boilerplate['title']
-                except e:
-                        continue
-                """
                 
                 try:
-                        column_b = boilerplate["body"] if boilerplate.has_key("body") else ""
-                        column_u = boilerplate["url"] if boilerplate.has_key("url") else ""
-                        column_t = boilerplate["title"] if boilerplate.has_key("title") else ""
-                        
-                        column = "%s %s %s" % (column_b, column_u, column_t)
+                        column = boilerplate[column_name]
                 except :
                         column = ' '
                       
@@ -71,8 +60,7 @@ def iterable( reader, test_set, column_name ):
                         label = line[-1]
                         labels.append( int( label ))
 
-                column = column.lower().encode( 'ascii', 'ignore' ) 
-                #print body
+                column = column.lower().encode( 'ascii', 'ignore' )
                 yield column
 
 ###
@@ -89,39 +77,12 @@ parser.add_argument( "-t", "--test-set", help = "if an input file is a test set"
 
 args = parser.parse_args()
 
-#stop_words = "a,able,about,across,after,all,almost,also,am,among,an,and,any,are,as,at,be,because,been,but,by,can,cannot,could,dear,did,do,does,either,else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its,just,least,let,like,likely,may,me,might,most,must,my,neither,no,nor,not,of,off,often,on,only,or,other,our,own,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which,while,who,whom,why,will,with,would,yet,you,your"
-
-#stop_words = stop_words.split(",")
-
 i_f = open( args.input_file )
 reader = csv.reader( i_f, delimiter = "\t" )
 
 reader.next()
 labels = []
 url_id = []
-
-#i = 0
-#X =  iterable(reader, args.test_set, args.column)
-
-#train_or_test = "train" if not args.test_set else "test"
-#file_name = "%s_%s.lac" % (args.column, train_or_test)
-
-#f = open(file_name, "w")
-#for x in X:
-  #x.replace(" ", " w=")
-  
-  #label = labels[i] if not args.test_set else 1
-  #line = x.replace(",","")
-  #line = line.lower().split(" ")
-  
-  #line = [x for x in line if x not in stop_words]
-    
-  #line = " w=".join(line)
-  #line = "%s CLASS=%s w=%s\n" % (url_id[i], label, line)
-  #f.write(line)
-  #i += 1
-  
-#f.close()
 
 if args.load_vocabulary_file:
         
@@ -143,9 +104,6 @@ else:
                 feature_names = vectorizer.get_feature_names()
                 save_vocabulary( vocabulary_file, feature_names )
                 
-
-
-
 print X.shape
 # print vectorizer.get_feature_names()
 
