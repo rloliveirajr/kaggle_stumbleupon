@@ -6,6 +6,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.naive_bayes import BernoulliNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
+from sklearn.lda import LDA
 from sklearn.datasets import load_svmlight_file
 from sklearn.datasets import load_svmlight_files
 from sklearn import cross_validation
@@ -127,7 +128,7 @@ parser.add_argument( "-c", "--cross_validation", help = "if have make cross-vali
 
 args = parser.parse_args()
 
-classifier = SVC( kernel = 'linear', C = 1000 )
+classifier = LDA(n_components=2)
 #classifier = RandomForestClassifier()
 
 X_url, y, X_title, y_t, X_body, y_b, X_a, y_a = load_svmlight_files(("url_train.txt", "title_train.txt", "body_train.txt", "all_train.txt"))

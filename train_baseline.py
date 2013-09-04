@@ -8,7 +8,7 @@ def main():
   #read train data
   train = []
   target = []
-  with open("train.tsv", 'rb') as csvfile:
+  with open("data/train.tsv", 'rb') as csvfile:
     reader = csv.reader(csvfile, dialect='excel-tab')
     reader.next() #skip the header
     for row in reader:
@@ -21,7 +21,7 @@ def main():
   #read valid data
   valid = []
   valid_index = []
-  with open("test.tsv", 'rb') as csvfile:
+  with open("data/test.tsv", 'rb') as csvfile:
     reader = csv.reader(csvfile, dialect='excel-tab')
     reader.next() #skip the header
     for row in reader:
@@ -52,16 +52,16 @@ def main():
     line = line + alchemy_category
     valid[idx] = line
 
-  # run the model
-  classifier = RandomForestRegressor(n_estimators=1000,verbose=2,n_jobs=20,min_samples_split=5,random_state=1034324)
-  classifier.fit(train, target)
-  predictions = classifier.predict(valid)
+  ## run the model
+  #classifier = RandomForestRegressor(n_estimators=1000,verbose=2,n_jobs=20,min_samples_split=5,random_state=1034324)
+  #classifier.fit(train, target)
+  #predictions = classifier.predict(valid)
 
-  # write
-  writer = csv.writer(open("predictions", "w"), lineterminator="\n")
-  rows = [x for x in zip(valid_index, predictions)]
-  writer.writerow(("urlid","label"))
-  writer.writerows(rows)
+  ## write
+  #writer = csv.writer(open("predictions", "w"), lineterminator="\n")
+  #rows = [x for x in zip(valid_index, predictions)]
+  #writer.writerow(("urlid","label"))
+  #writer.writerows(rows)
 
 
 if __name__=="__main__":

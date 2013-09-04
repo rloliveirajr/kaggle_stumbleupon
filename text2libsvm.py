@@ -46,7 +46,11 @@ def iterable( reader, test_set, column_name ):
                 boilerplate = json.loads( boilerplate )
                 
                 try:
-                        column = boilerplate[column_name]
+                        column_u = boilerplate["url"] if boilerplate.has_key("url") else ""
+                        column_b = boilerplate["body"] if boilerplate.has_key("body") else ""
+                        column_t = boilerplate["title"] if boilerplate.has_key("title") else ""
+                        
+                        column = "%s %s %s" % (column_u,column_b,column_t)
                 except :
                         column = ' '
                       
@@ -90,11 +94,11 @@ if args.load_vocabulary_file:
         print "loading vocabulary from", vocabulary_file
         
         vocabulary = load_vocabulary( vocabulary_file )
-        vectorizer = CountVectorizer( min_df = 3, max_df = 0.9, strip_accents = 'unicode', binary = True, vocabulary = vocabulary )
+        vectorizer = CountVectorizer( min_df = 3, max_df = 0.9, strip_accents = 'unicode', binary = True, vocabulary = vocabulary, ngram_range=(2,2), lowercase=True )
         X = vectorizer.transform( iterable( reader, args.test_set, args.column ))
 
 else:
-        vectorizer = CountVectorizer( min_df = 3, max_df = 0.9, strip_accents = 'unicode', binary = True )
+        vectorizer = CountVectorizer( min_df = 3, max_df = 0.9, strip_accents = 'unicode', binary = True, ngram_range=(2,2), lowercase=True )
         X = vectorizer.fit_transform( iterable( reader, args.test_set, args.column ))
 
         if args.save_vocabulary_file:
